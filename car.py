@@ -128,7 +128,6 @@ class Car:
         try:
             if self.__ready_status():
                 part_distance = 0
-                time_driving = 0
                 for i in range(distance):
                     print(f'Машина проехала {i+1} км.')
                     part_distance += 1
