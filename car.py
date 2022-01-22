@@ -98,13 +98,13 @@ class Car:
             return True
         return False
 
-    def __alarm_status(self):
+    def alarm_status(self):
         if self.driver is not None and self.__key_owner:
             return True
         return False
 
     def __ready_status(self):
-        if not self.__alarm_status:
+        if not self.alarm_status():
             raise AlarmOn('Alarm!')
         if not self.__engine_status:
             raise EngineIsNotRunning("двигатель не запущен")
@@ -120,7 +120,7 @@ class Car:
             if self.__ready_status():
                 for i in range(distance):
                     print(f'\rМашина проехала {i+1} км.', end='')
-                    self.__traffic_lights__()
+                    self.__traffic_lights(1)
                     time.sleep(0.3)
                     self.__mileage += 1
                 print('\nПуть пройден')
@@ -129,13 +129,14 @@ class Car:
     # /Блок отработки движения машины
     # Блок светофора
 
-    def __traffic_lights(self, sleep_time):
+    @staticmethod
+    def __traffic_lights(sleep_time):
         """
         Светофор
         """
-        rand_bool = random.choice([True,False]) # случайно выбирается состояние светофора
+        rand_bool = random.choice([True, False])  # случайно выбирается состояние светофора
         if rand_bool:
-            print("Светофор красный, нужно подождать")
+            print(f"\nСветофор красный, нужно подождать {sleep_time} сек.")
             time.sleep(sleep_time)  # если светофор True красный, то ждем 1 секунду
     # /Блок светофора
 # /Блок отработки движения.
@@ -183,8 +184,9 @@ if __name__ == '__main__':
     # Блок отработки движения машины
     car.start_engine()
     car.driver = Driver("Иван")
-    car.move()
-    car.move()
+
+    # car.move()
+    # car.move()
     # /Блок отработки движения машины
 
     # Блок отработки свойств
