@@ -11,6 +11,10 @@ class EngineIsNotRunning(Exception):
     pass
 
 
+class AlarmOn(Exception):
+    pass
+
+
 class DriverNotFoundError(Exception):
     pass
 
@@ -33,6 +37,9 @@ class Car:
         self.__mileage = 0
         self.__driver = None
         self.__engine_status = False
+
+        self.__alarm_status = False
+        self.__key_owner = False
 
     def __new__(cls, *args, **kwargs):
         cls.__append_new_car_counter()
@@ -70,6 +77,7 @@ class Car:
         if not isinstance(driver, Driver):
             raise DriverTypeError(f"Ожидается {Driver}, получено {type(driver)}")
         self.__driver = driver
+        self.__key_owner = True
 
     # Эквивалент свойствам (property)
     # def set_driver(self, driver: Driver):
@@ -89,12 +97,22 @@ class Car:
             return True
         return False
 
+    def __alarm_status(self):
+        if self.driver is not None and self.__key_owner:
+            return True
+        return False
+
     def __ready_status(self):
+        if not self.__alarm_status:
+            raise AlarmOn('Alarm!')
         if not self.__engine_status:
             raise EngineIsNotRunning("двигатель не запущен")
         if not self.__check_driver():
             raise DriverNotFoundError("водитель не найден")
         return True
+        # if self.__engine_status and self.__check_driver():
+        #     return True
+        # return False
 
     def move(self, distance=10):
         try:
@@ -103,12 +121,14 @@ class Car:
                     print(f'\rМашина проехала {i+1} км.', end='')
                     time.sleep(0.3)
                     self.__mileage += 1
-                print('\nПуть пройден')
-        except (EngineIsNotRunning, DriverNotFoundError) as e:
-            print(f"Машина не может начать движение, т.к. {e}")
-    # /Блок отработки движения машины
+#                    print(f'mileage{self.__mileage}')
+                print('Done.')
+            print(f'Car is not ready.')
+        except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
+            print(repr(e))
+# /Блок отработки движения.
 
-    # Блок работы с защищёнными методами
+# Блок работы с защищёнными методами.
     @property
     def _mileage(self):
         return self.__mileage
