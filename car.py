@@ -39,7 +39,6 @@ class Car:
         self.__driver = None
         self.__engine_status = False
 
-        self.__alarm_status = False
         self.__key_owner = False
 
     def __new__(cls, *args, **kwargs):
@@ -159,6 +158,10 @@ if __name__ == '__main__':
 
     car = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
     car_2 = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
+
+    car.start_engine()
+    car.driver = Driver("Иван")
+    car.move()
 
     # print(car.brand)
     # print(car_2.brand)
