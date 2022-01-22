@@ -1,7 +1,7 @@
 import time
 import random
 
-from driver import Driver
+from driver import Driver, Experience
 
 
 class DriverTypeError(Exception):
@@ -17,6 +17,14 @@ class AlarmOn(Exception):
 
 
 class DriverNotFoundError(Exception):
+    pass
+
+
+class MoveStop(Exception):
+    pass
+
+
+class TechnicInspection(Exception):
     pass
 
 
@@ -38,6 +46,8 @@ class Car:
         self.__mileage = 0
         self.__driver = None
         self.__engine_status = False
+        self.__count_TO = 0
+        self.__status_TO = False
 
         self.__key_owner = False
 
@@ -109,25 +119,54 @@ class Car:
             raise EngineIsNotRunning("двигатель не запущен")
         if not self.__check_driver():
             raise DriverNotFoundError("водитель не найден")
+        if not self.check_TO():
+            raise TechnicInspection(f"ТО не пройдено. Автомобиль не поедет")
+
         return True
-        # if self.__engine_status and self.__check_driver():
-        #     return True
-        # return False
 
     def move(self, distance=10):
         try:
             if self.__ready_status():
+                part_distance = 0
+                time_driving = 0
                 for i in range(distance):
-                    print(f'\rМашина проехала {i+1} км.', end='')
-                    self.__traffic_lights(1)
+                    print(f'Машина проехала {i+1} км.')
+                    part_distance += 1
+                    self.__traffic_lights(2)
                     time.sleep(0.3)
                     self.__mileage += 1
-                print('\nПуть пройден')
+                    time_driving = part_distance / 60
+                    print(f'Непрерывное время в пути {time_driving}')
+
+                    try:
+                        if time_driving >= 0.1:
+                            raise MoveStop
+                    except MoveStop:
+                        print('Требуется принудительная остановка 5 сек.')
+                        time.sleep(5)
+                        part_distance = 0
+
+                    print('\n\n')
+
+                print('Путь пройден')
         except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
     # /Блок отработки движения машины
-    # Блок светофора
 
+    def make_TO(self):
+        self.__count_TO += 1
+        self.__status_TO = False
+
+    def check_TO(self):
+        if self.__mileage % 30 > 0 and self.__status_TO:
+            print(f"{self.__driver}, Вы не можете ехать без пройденного ТО")
+            return False
+        if self.__mileage >= 20:
+            self.__status_TO = True
+            print(f"Необходимо пройти ТО, можно проехать еще 10 км, после автомобиль не поедет")
+        return True
+
+    # Блок светофора
     @staticmethod
     def __traffic_lights(sleep_time):
         """
@@ -135,7 +174,7 @@ class Car:
         """
         rand_bool = random.choice([True, False])  # случайно выбирается состояние светофора
         if rand_bool:
-            print(f"\nСветофор красный, нужно подождать {sleep_time} сек.")
+            print(f"Светофор красный, нужно подождать {sleep_time} сек.")
             time.sleep(sleep_time)  # если светофор True красный, то ждем 1 секунду
     # /Блок светофора
 # /Блок отработки движения.
@@ -160,7 +199,7 @@ if __name__ == '__main__':
     car_2 = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
 
     car.start_engine()
-    car.driver = Driver("Иван")
+    car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
     car.move()
 
     # print(car.brand)
@@ -185,8 +224,8 @@ if __name__ == '__main__':
     # /Блок работы с защищёнными методами
 
     # Блок отработки движения машины
-    car.start_engine()
-    car.driver = Driver("Иван")
+    # car.start_engine()
+    # car.driver = Driver("Иван")
 
     # car.move()
     # car.move()
