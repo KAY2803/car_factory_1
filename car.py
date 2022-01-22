@@ -119,13 +119,24 @@ class Car:
             if self.__ready_status():
                 for i in range(distance):
                     print(f'\rМашина проехала {i+1} км.', end='')
+                    self.__traffic_lights__()
                     time.sleep(0.3)
                     self.__mileage += 1
-#                    print(f'mileage{self.__mileage}')
-                print('Done.')
-            print(f'Car is not ready.')
+                print('\nПуть пройден')
         except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
-            print(repr(e))
+            print(f"Машина не может начать движение, т.к. {e}")
+    # /Блок отработки движения машины
+    # Блок светофора
+
+    def __traffic_lights(self, sleep_time):
+        """
+        Светофор
+        """
+        rand_bool = random.choice([True,False]) # случайно выбирается состояние светофора
+        if rand_bool:
+            print("Светофор красный, нужно подождать")
+            time.sleep(sleep_time)  # если светофор True красный, то ждем 1 секунду
+    # /Блок светофора
 # /Блок отработки движения.
 
 # Блок работы с защищёнными методами.
