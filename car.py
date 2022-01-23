@@ -1,31 +1,8 @@
 import time
 import random
-
+from utils import check_type, check_types
+from custom_errors import *
 from driver import Driver, Experience
-
-
-class DriverTypeError(Exception):
-    pass
-
-
-class EngineIsNotRunning(Exception):
-    pass
-
-
-class AlarmOn(Exception):
-    pass
-
-
-class DriverNotFoundError(Exception):
-    pass
-
-
-class MoveStop(Exception):
-    pass
-
-
-class TechnicInspection(Exception):
-    pass
 
 
 class Car:
@@ -66,8 +43,8 @@ class Car:
 
     @classmethod
     def _change_max_speed(cls, max_speed):
-        if not isinstance(max_speed, (int, float)):
-            raise TypeError(f"Ожидается {int} или {float}, получено {type(max_speed)}")
+        check_type(max_speed, (int, float))
+
         cls._max_speed = max_speed
 
     @classmethod
@@ -84,6 +61,7 @@ class Car:
 
     @driver.setter
     def driver(self, driver: Driver):
+
         if not isinstance(driver, Driver):
             raise DriverTypeError(f"Ожидается {Driver}, получено {type(driver)}")
         self.__driver = driver
@@ -99,8 +77,19 @@ class Car:
     #     return self.__driver
 
     # Блок отработки движения машины
+    # def start_engine(self):
+    #     self.__engine_status = True
+
+    @property
     def start_engine(self):
-        self.__engine_status = True
+        return self.__engine_status
+
+    @start_engine.setter
+    def start_engine(self, key_owner: bool):
+        if self.__key_owner is True:
+            self.__engine_status = True
+        else:
+            print('Нет ключей')
 
     def __check_driver(self):
         if self.driver is not None:
@@ -197,9 +186,9 @@ if __name__ == '__main__':
     car = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
     car_2 = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
 
-    car.start_engine()
     car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
-    car.move()
+    car.start_engine = "Заведись"
+    # car.move()
 
     # print(car.brand)
     # print(car_2.brand)
