@@ -20,3 +20,6 @@ class MoveStop(Exception):
 
 class TechnicInspection(Exception):
     pass
+
+class GasTankEmpty(Exception):
+    pass

@@ -9,6 +9,7 @@ class Car:
     brand = None
     _max_speed = 180
     __created_car = 0
+    __gas_tank = 50
 
     def __init__(self, color, body_type, model_name,
                  engine_type, gear_type, complectation):
@@ -27,6 +28,7 @@ class Car:
         self.__status_TO = False
 
         self.__key_owner = False
+        self.fuel = 0
 
     def __new__(cls, *args, **kwargs):
         cls.__append_new_car_counter()
@@ -110,6 +112,8 @@ class Car:
             raise DriverNotFoundError("водитель не найден")
         if not self.check_TO():
             raise TechnicInspection(f"ТО не пройдено. Автомобиль не поедет")
+        if self.fuel == 0:
+            raise GasTankEmpty(f"отсутствует топливо")
 
         return True
 
@@ -125,6 +129,9 @@ class Car:
                     self.__mileage += 1
                     time_driving = part_distance / 60
                     print(f'Непрерывное время в пути {time_driving}')
+                    self.fuel -= 0.1
+                    if self.fuel <= 0.1:
+                        raise GasTankEmpty(f"отсутствует топливо, необходимо заправиться")
 
                     try:
                         if time_driving >= 0.1:
@@ -180,6 +187,17 @@ class Car:
         self.__mileage = mileage
     # /Блок работы с защищёнными методами
 
+    @property
+    def fuel(self):
+        return self._fuel
+
+    @fuel.setter
+    def fuel(self, fuel: (int, float)):
+        check_types(fuel, (int, float))
+        if 0 > fuel > self.__gas_tank:
+            raise ValueError
+        self._fuel = fuel
+
 
 if __name__ == '__main__':
 
@@ -188,6 +206,7 @@ if __name__ == '__main__':
 
     car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
     car.start_engine = "Заведись"
+    car.fuel = 0.5
     # car.move()
 
     # print(car.brand)
