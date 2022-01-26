@@ -28,7 +28,9 @@ class Car:
         self.__status_TO = False
 
         self.__key_owner = False
+
         self.fuel = 0
+        self.driver_license = None
 
     def __new__(cls, *args, **kwargs):
         cls.__append_new_car_counter()
@@ -68,6 +70,11 @@ class Car:
             raise DriverTypeError(f"Ожидается {Driver}, получено {type(driver)}")
         self.__driver = driver
         self.__key_owner = True
+
+    def check_driver_license(self):
+        if self.driver.license is not None:
+            return True
+        return False
 
     # Эквивалент свойствам (property)
     # def set_driver(self, driver: Driver):
@@ -114,6 +121,8 @@ class Car:
             raise TechnicInspection(f"ТО не пройдено. Автомобиль не поедет")
         if self.fuel == 0:
             raise GasTankEmpty(f"отсутствует топливо")
+        if not self.check_driver_license():
+            raise InvalidLicense("водительские права недействительны")
 
         return True
 
@@ -207,7 +216,8 @@ if __name__ == '__main__':
     car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
     car.start_engine = "Заведись"
     car.fuel = 0.5
-    # car.move()
+    car.driver.license = 1234567890, 2020, 11, 12
+    car.move()
 
     # print(car.brand)
     # print(car_2.brand)

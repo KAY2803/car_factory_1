@@ -23,3 +23,6 @@ class TechnicInspection(Exception):
 
 class GasTankEmpty(Exception):
     pass
+
+class InvalidLicense(Exception):
+    pass
