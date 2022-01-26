@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Union
-from utils import check_type, check_types
+from utils import check_types
 
 
 @dataclass
@@ -56,6 +56,7 @@ class Driver:
 
 
 if __name__ == '__main__':
+
     experience_ivan = Experience((0, 5), (5, 10), (10, 60), 12)
     experience_alex = Experience((0, 5), (5, 10), (10, 60), 5)
 
@@ -66,4 +67,3 @@ if __name__ == '__main__':
 
     print(ivan)
     print(alex)
-
