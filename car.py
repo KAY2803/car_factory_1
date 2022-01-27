@@ -6,13 +6,24 @@ from driver import Driver, Experience
 
 
 class Car:
+    """
+    Класс описывающий автомобиль
+    """
     brand = None
     _max_speed = 180
     __created_car = 0
 
     def __init__(self, color, body_type, model_name,
                  engine_type, gear_type, complectation):
-
+        """
+        Создаем автомобиль.
+        :param color:           цвет автомобиля
+        :param body_type:       тип кузова
+        :param model_name:      модель
+        :param engine_type:     тип двигателя
+        :param gear_type:       тип коробки передач
+        :param complectation:   комплектация
+        """
         self.__model_name = model_name
         self.__body_type = body_type
         self._engine_type = engine_type
@@ -20,11 +31,10 @@ class Car:
         self.complectation = complectation
         self.color = color
 
-        self.__mileage = 0
-        self.__driver = None
-        self.__engine_status = False
-        self.__count_TO = 0
-        self.__status_TO = False
+        self.__mileage = 0          # одометр
+        self.__count_TO = 1         # счетчик ТО
+        self.__const_TO = 25        # пробега с которого начинается предупреждение о необходимости пройти ТО
+        self.__status_TO = False    # статус ТО
 
         self.__key_owner = False
 
@@ -108,8 +118,8 @@ class Car:
             raise EngineIsNotRunning("двигатель не запущен")
         if not self.__check_driver():
             raise DriverNotFoundError("водитель не найден")
-        if not self.check_TO():
-            raise TechnicInspection(f"ТО не пройдено. Автомобиль не поедет")
+        if not self.__check_technical_inspection():
+            raise TechnicInspection(f"без пройденного ТО автомобиль не поедет")
 
         return True
 
@@ -123,6 +133,14 @@ class Car:
                     self.__traffic_lights(2)
                     time.sleep(0.3)
                     self.__mileage += 1
+                    # отработка ТО
+                    if self.__mileage > self.__const_TO:
+                        print(f" Общий пробег = {self.__mileage}, пройдите ТО {self.__count_TO}")
+                        if self.__mileage % 30 == 0:
+                            self.__status_TO = True
+                            self.__const_TO += self.__mileage
+                            raise TechnicInspection(f" ТО {self.__count_TO} НЕ ПРОЙДЕНО!")
+                    # конец отработки ТО
                     time_driving = part_distance / 60
                     print(f'Непрерывное время в пути {time_driving}')
 
@@ -137,22 +155,25 @@ class Car:
                     print('\n\n')
 
                 print('Путь пройден')
-        except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
+        except (EngineIsNotRunning, DriverNotFoundError, TechnicInspection, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
-    # /Блок отработки движения машины
+    # /Блок отработки технического осмотра
 
-    def make_TO(self):
+    def __check_technical_inspection(self):
+        """
+        Проверка статуса технического осмотра
+        """
+        if self.__status_TO is False:
+            return True
+        return False
+
+    def _make_technical_inspection(self):
+        """
+        Проведение технического осмотра
+        """
+        print(f"TO {self.__count_TO} пройдено")
         self.__count_TO += 1
         self.__status_TO = False
-
-    def check_TO(self):
-        if self.__mileage % 30 > 0 and self.__status_TO:
-            print(f"{self.__driver}, Вы не можете ехать без пройденного ТО")
-            return False
-        if self.__mileage >= 20:
-            self.__status_TO = True
-            print(f"Необходимо пройти ТО, можно проехать еще 10 км, после автомобиль не поедет")
-        return True
 
     # Блок светофора
     @staticmethod
@@ -226,3 +247,11 @@ if __name__ == '__main__':
     # car.set_driver(Driver('Андрей'))
     # car.get_driver()
     # /Блок отработки свойств
+
+
+    # Блок проверки отработки ТО
+    car.move()
+    car.move()
+    car.move()
+    #car._make_technical_inspection()
+    car.move()
