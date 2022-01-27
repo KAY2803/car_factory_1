@@ -1,5 +1,6 @@
 import time
 import random
+
 from utils import check_type, check_types
 from custom_errors import *
 from driver import Driver, Experience
@@ -64,6 +65,7 @@ class Car:
 
         if not isinstance(driver, Driver):
             raise DriverTypeError(f"Ожидается {Driver}, получено {type(driver)}")
+
         self.__driver = driver
         self.__key_owner = True
 
@@ -116,7 +118,15 @@ class Car:
     def move(self, distance=10):
         try:
             if self.__ready_status():
+
+                if distance > self.__driver.get_max_trip_distance():
+                    print(f"Дистанция, которую нужно проехать, слишком большая для водителя с таким стажем вождения.\n"
+                          f"Водитель проедет максимум {self.__driver.get_max_trip_distance()} км")
+                    time.sleep(3)
+                    distance = self.__driver.get_max_trip_distance()
+
                 part_distance = 0
+
                 for i in range(distance):
                     print(f'Машина проехала {i+1} км.')
                     part_distance += 1
@@ -136,10 +146,12 @@ class Car:
 
                     print('\n\n')
 
-                print('Путь пройден')
+                print(f'Пройден путь в {distance} км '
+                      f'c максимальной скоростью {self.__driver.get_max_speed_driver()} км/ч')
         except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
-    # /Блок отработки движения машины
+
+    # Блок отработки технического обслуживания авто
 
     def make_TO(self):
         self.__count_TO += 1
@@ -155,6 +167,7 @@ class Car:
         return True
 
     # Блок светофора
+
     @staticmethod
     def __traffic_lights(sleep_time):
         """
@@ -164,21 +177,18 @@ class Car:
         if rand_bool:
             print(f"Светофор красный, нужно подождать {sleep_time} сек.")
             time.sleep(sleep_time)  # если светофор True красный, то ждем 1 секунду
-    # /Блок светофора
-# /Блок отработки движения.
 
-# Блок работы с защищёнными методами.
+    # Блок работы с защищёнными методами.
+
     @property
     def _mileage(self):
         return self.__mileage
 
     @_mileage.setter
     def _mileage(self, mileage):
-        if not isinstance(mileage, (int, float)):
-            raise TypeError(f"Ожидается {int} или {float}, получено {type(mileage)}")
+        check_types(mileage, (int, float))
 
         self.__mileage = mileage
-    # /Блок работы с защищёнными методами
 
 
 if __name__ == '__main__':
@@ -186,9 +196,10 @@ if __name__ == '__main__':
     car = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
     car_2 = Car('черный', 'седан', 'модель', 'бензин', 'автомат', 'люкс')
 
-    car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
+    experience_ivan = Experience((0, 5), (5, 15), (15, 100), 4)
+    car.driver = Driver("Иван", experience_ivan)
     car.start_engine = "Заведись"
-    # car.move()
+    car.move(22)
 
     # print(car.brand)
     # print(car_2.brand)
