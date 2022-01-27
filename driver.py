@@ -5,6 +5,12 @@ from utils import check_types
 
 @dataclass
 class Experience:
+    """
+    Класс Experience используется для стажа водителя
+
+    Применение - используется в классе Driver для определения максимального расстояния и максимальной скорости вождения.
+
+    """
     newbie: tuple = None
     middle: tuple = None
     professional: tuple = None
