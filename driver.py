@@ -1,9 +1,22 @@
+""" Модуль, который описывает класс Driver и класс Experience"""
+
 from dataclasses import dataclass
-from utils import check_types, check_type
 import datetime
+
+from utils import check_types, check_type
+
 
 @dataclass
 class Experience:
+    """Класс, который описывает водительский стаж
+
+    newbie: диапазон лет, который представляет собой небольшой стаж вождения
+    middle: диапазон лет, который представляет собой средний стаж вождения
+    profi: диапазон лет, который представляет собой большой стаж вождения
+    current_experience: текущий стаж вождения
+
+    """
+
     newbie: tuple = None
     middle: tuple = None
     profi: tuple = None
@@ -11,7 +24,21 @@ class Experience:
 
 
 class Driver:
+    """Класс, который описывает водителя транспортного средства.
+
+    Переменные класс:
+    name: имя водителя
+    experience: стаж вождения
+    Водитель характеризуется опытом вождения, может иметь права.
+
+    """
     def __init__(self, name: str, experience: Experience):
+        """Инициализируем водителя
+
+        :param name: имя водителя
+        :param experience: стаж вождения
+
+        """
         self.__name = name
         self.__experience = experience
 
@@ -25,19 +52,33 @@ class Driver:
         return f"Водитель {self.__name}"
 
     def get_experience(self):
+        """Метод, который возвращает стаж вождения"""
         return self.__experience
 
     @staticmethod
     def __check_experience(exp):
+        """Метод, который проверяет корректность введеного значения текущего стажа вождения
+        (значение не может быть отрицательным числом)
+
+        """
         if exp < 0:
             raise ValueError("Стаж введен не корректно")
 
     @property
     def license(self):
+        """Свойство, которое возвращает данные водительских прав"""
         return self.__license
 
     @license.setter
     def license(self, value: tuple[int, int, int, int]):
+        """Свойство, которое присваивает значение водительским правам, предварительно проведя проверку введенных данных
+
+        :param value: значение из 4 целых чисел, первое из которых - номер прав из 10 цифр; второе - год выдачи прав;
+        третье - месяц выдачи прав; четвертое - дата выдачи прав. Данные даты выдачи прав должны вводиться в формате,
+        подходящем для модуля datetime. Период действия прав не может превышать 10 лет с даты выдачи.
+        :return: возвращает строковое значение в виде номера и даты выдачи прав
+
+        """
         check_types(value, int)
         if len(str(value[0])) != 10:
             raise ValueError(f'Права не существуют')
