@@ -10,16 +10,6 @@ class Experience:
     professional: tuple = None
     current_experience: Union[int, float] = 0
 
-    def get_max_speed_driver(self):
-        max_speed_driver = 0
-        if self.newbie[0] <= self.current_experience < self.newbie[1]:
-            max_speed_driver = 90
-        if self.middle[0] <= self.current_experience < self.middle[1]:
-            max_speed_driver = 120
-        if self.professional[0] <= self.current_experience < self.professional[1]:
-            max_speed_driver = 150
-        return max_speed_driver
-
 
 class Driver:
     """
@@ -38,6 +28,10 @@ class Driver:
     -------
     get_experience()
         Позволяет получить доступ к стажу вождения
+    get_max_speed_driver()
+        Позволяет получить доступ к максимальной скорости вождения в зависимости от стажа водителя
+    get_max_trip_distance
+        Позволяет получить доступ к максимальному расстоянию, которое может проехать водитель, в зависимости от стажа
     __check_experience()
         Проверяет корректно введен стаж вождения
     """
@@ -57,6 +51,26 @@ class Driver:
     def get_experience(self):
         return self.__experience
 
+    def get_max_speed_driver(self):
+        max_speed_driver = None
+        if self.__experience.newbie[0] <= self.__experience.current_experience < self.__experience.newbie[1]:
+            max_speed_driver = 90
+        if self.__experience.middle[0] <= self.__experience.current_experience < self.__experience.middle[1]:
+            max_speed_driver = 120
+        if self.__experience.professional[0] <= self.__experience.current_experience:
+            max_speed_driver = 150
+        return max_speed_driver
+
+    def get_max_trip_distance(self):
+        max_trip_distance = None
+        if self.__experience.newbie[0] <= self.__experience.current_experience < self.__experience.newbie[1]:
+            max_trip_distance = 20
+        if self.__experience.middle[0] <= self.__experience.current_experience < self.__experience.middle[1]:
+            max_trip_distance = 50
+        if self.__experience.professional[0] <= self.__experience.current_experience:
+            max_trip_distance = 100
+        return max_trip_distance
+
     @staticmethod
     def __check_experience(exp):
         check_types(exp, (int, float))
@@ -73,10 +87,7 @@ if __name__ == '__main__':
     ivan = Driver("Иван", experience_ivan)
     alex = Driver("Алексей", experience_alex)
 
-    print(experience_alex.get_max_speed_driver())
-    print(experience_ivan.get_max_speed_driver())
-
-    print(ivan.get_experience().get_max_speed_driver())
+    print(ivan.get_max_speed_driver())
 
     print(ivan)
     print(alex)
