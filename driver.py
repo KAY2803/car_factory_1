@@ -87,13 +87,16 @@ class Driver:
 
 if __name__ == '__main__':
 
-    experience_ivan = Experience((0, 5), (5, 15), (15, 60), 12)
-    experience_alex = Experience((0, 5), (5, 15), (15, 60), 16)
+    experience_ivan = Experience((0, 5), (5, 15), (15, 100), 13)
+    experience_alex = Experience((0, 5), (5, 15), (15, 100), 16)
 
     ivan = Driver("Иван", experience_ivan)
     alex = Driver("Алексей", experience_alex)
 
     print(ivan.get_max_speed_driver())
+    print(ivan.get_max_trip_distance())
+
+    print("-------------")
 
     print(ivan)
     print(alex)
