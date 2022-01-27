@@ -10,6 +10,16 @@ class Experience:
     professional: tuple = None
     current_experience: Union[int, float] = 0
 
+    def get_max_speed_driver(self):
+        max_speed_driver = 0
+        if self.newbie[0] <= self.current_experience < self.newbie[1]:
+            max_speed_driver = 90
+        if self.middle[0] <= self.current_experience < self.middle[1]:
+            max_speed_driver = 120
+        if self.professional[0] <= self.current_experience < self.professional[1]:
+            max_speed_driver = 150
+        return max_speed_driver
+
 
 class Driver:
     """
@@ -57,13 +67,16 @@ class Driver:
 
 if __name__ == '__main__':
 
-    experience_ivan = Experience((0, 5), (5, 10), (10, 60), 12)
-    experience_alex = Experience((0, 5), (5, 10), (10, 60), 5)
+    experience_ivan = Experience((0, 5), (5, 15), (15, 60), 12)
+    experience_alex = Experience((0, 5), (5, 15), (15, 60), 16)
 
     ivan = Driver("Иван", experience_ivan)
     alex = Driver("Алексей", experience_alex)
 
-    print(ivan.get_experience())
+    print(experience_alex.get_max_speed_driver())
+    print(experience_ivan.get_max_speed_driver())
+
+    print(ivan.get_experience().get_max_speed_driver())
 
     print(ivan)
     print(alex)
