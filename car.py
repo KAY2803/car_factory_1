@@ -33,7 +33,7 @@ class Car:
 
         self.__mileage = 0          # одометр
         self.__count_TO = 1         # счетчик ТО
-        self.__const_TO = 25        # пробега с которого начинается предупреждение о необходимости пройти ТО
+        self.__distance_TO = 30        # пробег требующий ТО
         self.__status_TO = False    # статус ТО
 
         self.__key_owner = False
@@ -123,7 +123,7 @@ class Car:
 
         return True
 
-    def move(self, distance=10):
+    def move(self, distance=20):
         try:
             if self.__ready_status():
                 part_distance = 0
@@ -134,11 +134,11 @@ class Car:
                     time.sleep(0.3)
                     self.__mileage += 1
                     # отработка ТО
-                    if self.__mileage > self.__const_TO:
+                    if self.__mileage > self.__distance_TO - 5:
                         print(f" Общий пробег = {self.__mileage}, пройдите ТО {self.__count_TO}")
-                        if self.__mileage % 30 == 0:
+                        if self.__mileage % self.__distance_TO == 0:
                             self.__status_TO = True
-                            self.__const_TO += self.__mileage
+                            self.__distance_TO += self.__mileage
                             raise TechnicInspection(f" ТО {self.__count_TO} НЕ ПРОЙДЕНО!")
                     # конец отработки ТО
                     time_driving = part_distance / 60
@@ -157,7 +157,7 @@ class Car:
                 print('Путь пройден')
         except (EngineIsNotRunning, DriverNotFoundError, TechnicInspection, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
-    # /Блок отработки технического осмотра
+    # Блок отработки технического осмотра
 
     def __check_technical_inspection(self):
         """
@@ -174,6 +174,21 @@ class Car:
         print(f"TO {self.__count_TO} пройдено")
         self.__count_TO += 1
         self.__status_TO = False
+
+    @property
+    def _distance_tech_inspection(self):
+        return self.__distance_TO
+
+    @_distance_tech_inspection.setter
+    def _distance_tech_inspection(self, distance_tech_ispection):
+        """
+        Устанавливаем промежуток между техническим осмотром
+        :param distance_tech_ispection: расстояние между техническим осмотром
+        """
+        if not isinstance(distance_tech_ispection, int):
+            raise TypeError(f"Ожидается {int}, получено {type(distance_tech_ispection)}")
+
+        self.__distance_TO = distance_tech_ispection
 
     # Блок светофора
     @staticmethod
@@ -250,8 +265,15 @@ if __name__ == '__main__':
 
 
     # Блок проверки отработки ТО
-    car.move()
-    car.move()
-    car.move()
-    #car._make_technical_inspection()
-    car.move()
+    # car.move()
+    # car.move()
+    # car.move()
+    # car._make_technical_inspection()
+    # car.move()
+    # car.move()
+    # car.move()
+    #
+
+    print(car._distance_tech_inspection)
+    car._distance_tech_inspection = "50"
+    print(car._distance_tech_inspection)
