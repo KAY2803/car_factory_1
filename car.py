@@ -157,6 +157,7 @@ class Car:
                 print('Путь пройден')
         except (EngineIsNotRunning, DriverNotFoundError, TechnicInspection, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
+
     # Блок отработки технического осмотра
 
     def __check_technical_inspection(self):
@@ -190,6 +191,7 @@ class Car:
 
         self.__distance_TO = distance_tech_ispection
 
+
     # Блок светофора
     @staticmethod
     def __traffic_lights(sleep_time):
@@ -200,10 +202,9 @@ class Car:
         if rand_bool:
             print(f"Светофор красный, нужно подождать {sleep_time} сек.")
             time.sleep(sleep_time)  # если светофор True красный, то ждем 1 секунду
-    # /Блок светофора
-# /Блок отработки движения.
 
-# Блок работы с защищёнными методами.
+
+    # Блок работы с защищёнными методами.
     @property
     def _mileage(self):
         return self.__mileage
@@ -214,7 +215,6 @@ class Car:
             raise TypeError(f"Ожидается {int} или {float}, получено {type(mileage)}")
 
         self.__mileage = mileage
-    # /Блок работы с защищёнными методами
 
 
 if __name__ == '__main__':
@@ -265,15 +265,15 @@ if __name__ == '__main__':
 
 
     # Блок проверки отработки ТО
-    # car.move()
-    # car.move()
-    # car.move()
-    # car._make_technical_inspection()
-    # car.move()
-    # car.move()
-    # car.move()
+    car.move()
+    car.move()
+    car.move()
+    car._make_technical_inspection()
+    car.move()
+    car.move()
+    car.move()
     #
 
-    print(car._distance_tech_inspection)
-    car._distance_tech_inspection = "50"
-    print(car._distance_tech_inspection)
+    # print(car._distance_tech_inspection)
+    # car._distance_tech_inspection = "50"
+    # print(car._distance_tech_inspection)
