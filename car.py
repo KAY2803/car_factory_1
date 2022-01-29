@@ -1,7 +1,6 @@
 """Модуль, который описывает класс Car."""
-
+import time
 import random
-from utils import check_type, check_types
 from custom_errors import *
 from driver import Driver, Experience
 from utils import check_type, check_types
@@ -122,19 +121,6 @@ class Car:
         if self.__driver.license is not None:
             return True
         return False
-
-    # Эквивалент свойствам (property)
-    # def set_driver(self, driver: Driver):
-    #     if not isinstance(driver, Driver):
-    #         raise DriverTypeError(f"Ожидается {Driver}, получено {type(driver)}")
-    #     self.__driver = driver
-    #
-    # def get_driver(self):
-    #     return self.__driver
-
-    # Блок отработки движения машины
-    # def start_engine(self):
-    #     self.__engine_status = True
 
     @property
     def start_engine(self):
@@ -270,7 +256,6 @@ class Car:
 
         self.__distance_TO = distance_tech_ispection
 
-
     # Блок светофора
     @staticmethod
     def __traffic_lights(sleep_time):
@@ -330,47 +315,9 @@ if __name__ == '__main__':
 
     car.driver = Driver("Иван", Experience((0, 5), (5, 10), (10, 60), 5))
     car.start_engine = "Заведись"
-    car.fuel = 0.5
+    car.fuel = 49
     car.driver.license = 1234567890, 2020, 11, 12
     car.move()
-
-    # print(car.brand)
-    # print(car_2.brand)
-    # Car.change_brand("Nissan")
-    # print(car.brand)
-    # print(car_2.brand)
-    #
-    # print(car._max_speed)
-    # print(car_2._max_speed)
-    # Car._change_max_speed(190)
-    # print(car._max_speed)
-    # print(car_2._max_speed)
-
-
-
-
-    # Блок работы с защищёнными методами
-    # print(car._mileage)
-    # car._mileage = '10'
-    # print(car._mileage)
-    # /Блок работы с защищёнными методами
-
-    # Блок отработки движения машины
-    # car.start_engine()
-    # car.driver = Driver("Иван")
-
-    # car.move()
-    # car.move()
-    # /Блок отработки движения машины
-
-    # Блок отработки свойств
-    # car.driver = Driver('Андрей')
-    # print(car.driver)
-    # Эквивалент свойствам (property)
-    # car.set_driver(Driver('Андрей'))
-    # car.get_driver()
-    # /Блок отработки свойств
-
 
     # Блок проверки отработки ТО
     car.move()
@@ -380,8 +327,3 @@ if __name__ == '__main__':
     car.move()
     car.move()
     car.move()
-    #
-
-    # print(car._distance_tech_inspection)
-    # car._distance_tech_inspection = "50"
-    # print(car._distance_tech_inspection)
