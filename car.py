@@ -1,8 +1,7 @@
 """Модуль, который описывает класс Car."""
 
 import random
-import time
-
+from utils import check_type, check_types
 from custom_errors import *
 from driver import Driver, Experience
 from utils import check_type, check_types
@@ -57,6 +56,12 @@ class Car:
         self.__count_TO = 0
         self.__status_TO = False
         self.__fuel = 0
+        self.__mileage = 0          # одометр
+        self.__count_TO = 1         # счетчик ТО
+        self.__distance_TO = 30        # пробег требующий ТО
+        self.__status_TO = False    # статус ТО
+
+        self.__key_owner = False
 
     def __new__(cls, *args, **kwargs):
         cls.__append_new_car_counter()
@@ -82,6 +87,7 @@ class Car:
 
         """
         check_type(max_speed, (int, float))
+
         cls._max_speed = max_speed
 
     @classmethod
@@ -105,9 +111,8 @@ class Car:
     def driver(self, driver: Driver):
         """Свойство, которое присваивает значение атрибуту __driver.
         Принимает аргумент driver класса Driver.
-        Если аргумент прошел проверку типа, также присвивает атрибуту __key_owner (ключи от ТС) значение True
+        Если аргумент прошел проверку типа, также присвивает атрибуту __key_owner (ключи от ТС) значение True"""
 
-        """
         check_type(driver, Driver)
         self.__driver = driver
         self.__key_owner = True
@@ -176,8 +181,9 @@ class Car:
             raise EngineIsNotRunning("двигатель не запущен")
         if not self.__check_driver():
             raise DriverNotFoundError("водитель не найден")
-        if not self.check_TO():
-            raise TechnicInspection(f"ТО не пройдено. Автомобиль не поедет")
+        if not self.__check_technical_inspection():
+            raise TechnicInspection(f"без пройденного ТО автомобиль не поедет")
+
         if self.fuel < 0.1:
             raise GasTankEmpty(f"отсутствует топливо")
         if not self.check_driver_license():
@@ -204,6 +210,14 @@ class Car:
                     self.__traffic_lights(2)
                     time.sleep(0.3)
                     self.__mileage += 1
+                    # отработка ТО
+                    if self.__mileage > self.__distance_TO - 5:
+                        print(f" Общий пробег = {self.__mileage}, пройдите ТО {self.__count_TO}")
+                        if self.__mileage % self.__distance_TO == 0:
+                            self.__status_TO = True
+                            self.__distance_TO += self.__mileage
+                            raise TechnicInspection(f" ТО {self.__count_TO} НЕ ПРОЙДЕНО!")
+                    # конец отработки ТО
                     time_driving = part_distance / 60
                     print(f'Непрерывное время в пути {time_driving}')
                     self.fuel -= 0.1
@@ -220,24 +234,42 @@ class Car:
                     print('\n\n')
 
                 print('Путь пройден')
-        except (EngineIsNotRunning, DriverNotFoundError, AlarmOn) as e:
+        except (EngineIsNotRunning, DriverNotFoundError, TechnicInspection, AlarmOn) as e:
             print(f"Машина не может начать движение, т.к. {e}")
     # /Блок отработки движения машины
 
-    def make_TO(self):
-        """Метод, который отслеживает проведение ТО. Присваивает значение счетчику пройденных ТО и статусу"""
+    # Блок отработки технического осмотра
+    def __check_technical_inspection(self):
+        """
+        Проверка статуса технического осмотра
+        """
+        if self.__status_TO is False:
+            return True
+        return False
+
+    def _make_technical_inspection(self):
+        """
+        Проведение технического осмотра
+        """
+        print(f"TO {self.__count_TO} пройдено")
         self.__count_TO += 1
         self.__status_TO = False
 
-    def check_TO(self):
-        """Метод, который проверяет, требуется ли проведение ТО в зависимости от пробега ТС"""
-        if self.__mileage % 30 > 0 and self.__status_TO:
-            print(f"{self.__driver}, Вы не можете ехать без пройденного ТО")
-            return False
-        if self.__mileage >= 20:
-            self.__status_TO = True
-            print(f"Необходимо пройти ТО, можно проехать еще 10 км, после автомобиль не поедет")
-        return True
+    @property
+    def _distance_tech_inspection(self):
+        return self.__distance_TO
+
+    @_distance_tech_inspection.setter
+    def _distance_tech_inspection(self, distance_tech_ispection):
+        """
+        Устанавливаем промежуток между техническим осмотром
+        :param distance_tech_ispection: расстояние между техническим осмотром
+        """
+        if not isinstance(distance_tech_ispection, int):
+            raise TypeError(f"Ожидается {int}, получено {type(distance_tech_ispection)}")
+
+        self.__distance_TO = distance_tech_ispection
+
 
     # Блок светофора
     @staticmethod
@@ -255,7 +287,7 @@ class Car:
     # /Блок светофора
 # /Блок отработки движения.
 
-# Блок работы с защищёнными методами.
+    # Блок работы с защищёнными методами.
     @property
     def _mileage(self):
         """Свойство, которое возвращает пробег ТС"""
@@ -338,3 +370,18 @@ if __name__ == '__main__':
     # car.set_driver(Driver('Андрей'))
     # car.get_driver()
     # /Блок отработки свойств
+
+
+    # Блок проверки отработки ТО
+    car.move()
+    car.move()
+    car.move()
+    car._make_technical_inspection()
+    car.move()
+    car.move()
+    car.move()
+    #
+
+    # print(car._distance_tech_inspection)
+    # car._distance_tech_inspection = "50"
+    # print(car._distance_tech_inspection)
