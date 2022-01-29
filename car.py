@@ -58,7 +58,6 @@ class Car:
         self.__status_TO = False
         self.__fuel = 0
 
-
     def __new__(cls, *args, **kwargs):
         cls.__append_new_car_counter()
         print(f"Выпущено {cls.__created_car} автомобилей, класса {cls.__name__}")
@@ -302,7 +301,6 @@ if __name__ == '__main__':
     car.fuel = 0.5
     car.driver.license = 1234567890, 2020, 11, 12
     car.move()
-
 
     # print(car.brand)
     # print(car_2.brand)
